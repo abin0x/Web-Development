@@ -1,0 +1,169 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+header {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.row {
+    height: 400px;
+    display: flex;
+    margin-bottom: 5px;
+}
+
+.row1 {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    height: 400px;
+    gap: 5px;
+}
+
+.row1 div {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Vertical Collage (2 stacked images in 1 column) */
+.verticle-collage {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 5px;
+}
+
+.verticle-collage img {
+    width: 100%;
+    height: calc(50% - 2.5px);
+    object-fit: cover;
+    display: block;
+}
+
+/* Square Collage (2 columns, each with 2 stacked images) */
+.square-collage {
+    display: flex;
+    flex: 1;
+    height: 100%;
+    gap: 5px;
+}
+
+.square-collage .verticle-collage {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    height: 100%;
+}
+
+.square-collage .verticle-collage img {
+    width: 100%;
+    height: calc(50% - 2.5px);
+    object-fit: cover;
+    display: block;
+}
+.row2 {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    height: 400px;
+    gap: 5px;
+    margin-top: 5px;
+}
+.row1 {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    height: 400px;
+    gap: 5px;
+}
+.row2 div {
+    width: 33.18%;
+    height: 100%;
+    /* display: flex; */
+    /* flex-direction: column; */
+}
+
+
+/* Responsive design  */
+@media screen and (max-width: 576px){
+    .row1{
+        flex-direction: column;
+        height: auto;
+        gap: 5px;
+
+    }
+    
+    .row2 {
+        flex-direction: column;
+        height: auto;
+        gap: 5px;
+    }
+    .row2 div {
+        width: 100%;
+        height: auto;
+    }
+}
+
+/* medium devices  */
+@media screen and (min-width: 576px) and (max-width: 992px) {
+    .row{
+        display: flex;
+    }
+
+    .row1,
+    .row2 {
+        flex-direction: column;
+        height: auto;
+        gap: 10px;
+    }
+        .row1>div,
+        .row2>div {
+            width: 100%;
+        }
+
+    /* Only apply 50% width where layout is row-like */
+    .square-collage {
+        display: flex;
+        flex-wrap: wrap;
+        /* gap: 10px; */
+    }
+
+    .square-collage .verticle-collage {
+        flex: 1 1 48%;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .square-collage .verticle-collage img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+
+    /* OPTIONAL: To center .square-collage in column layout */
+    .row1>.square-collage {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+}

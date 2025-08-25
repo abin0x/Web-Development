@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flex Box</title>
+    <style>
+        .container div{
+            border: 2px solid black;
+            padding: 20px;
+            margin: 10px;
+            background-color: lightblue;
+            font-size: medium;
+
+        }
+        .container{
+            display: flex;
+        }
+        .box{
+            border: 2px solid black;
+            padding: 20px;
+            margin: 10px;
+            background-color: lightgreen;
+            font-size: medium;
+            height: 100px;
+            width: 100px;
+        }
+        .box-container{
+            display: flex;
+            gap:50px
+        }
+        .user{
+            border: 4px solid aqua;
+            height: 100px;
+            width: 100px;
+            padding: 20px;
+            margin: 10px;
+            background-color: lightcoral;
+            font-size: medium;
+        }
+        .user-container{
+            display: flex;
+            
+            justify-content: center;
+            gap: 20px;
+        }
+        .card-contaioner{
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div>1</div>
+        <div>2</div>
+        <div>3</div>
+        <div>4</div>
+        <div>5</div>
+        <div>6</div>
+    </div>
+    <!-- .box{$}*6  -->
+    <div class="box-container">
+        <div class="box">1</div>
+        <div class="box">2</div>
+        <div class="box">3</div>
+        <div class="box">4</div>
+        <div class="box">5</div>
+        <div class="box">6</div>
+    </div>
+    <!-- .user{user-$}*3  -->
+    <div class="user-container">
+        <div class="user">user-1</div>
+        <div class="user">user-2</div>
+        <div class="user">user-3</div>
+    </div>
+    <div class="card-contaioner">
+        <!-- .user{user-$}*12 -->
+        <div class="user">user-1</div>
+        <div class="user">user-2</div>
+        <div class="user">user-3</div>
+        <div class="user">user-4</div>
+        <div class="user">user-5</div>
+        <div class="user">user-6</div>
+        <div class="user">user-7</div>
+        <div class="user">user-8</div>
+        <div class="user">user-9</div>
+        <div class="user">user-10</div>
+        <div class="user">user-11</div>
+        <div class="user">user-12</div>
+        <div class="user">user-7</div>
+        <div class="user">user-8</div>
+        <div class="user">user-9</div>
+        <div class="user">user-10</div>
+        <div class="user">user-11</div>
+        <div class="user">user-12</div>
+    </div>
+</body>
+</html>
