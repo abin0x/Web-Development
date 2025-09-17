@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment Box</title>
+    <style>
+        .comment {
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Comment Box</h1>
+    <section>
+        <h3>All Comments Here</h3>
+        <div id="comment-container">
+            <p class="comment">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ipsa iusto cum inventore eius fugiat nam? Maiores amet corrupti soluta perferendis a sed pariatur porro, autem eius ab similique assumenda impedit.</p>
+            <p class="comment">In similique dignissimos delectus illum soluta nostrum odio eius debitis accusantium veritatis, aliquid blanditiis quaerat? Optio, nihil culpa, vero similique corrupti qui voluptas dolorum quod unde, error mollitia officiis reiciendis.</p>
+            <p class="comment">Ratione, porro hic voluptatibus pariatur iure necessitatibus molestiae amet velit voluptates nobis, corporis aliquam voluptate deleniti, cum iste dicta distinctio fuga eum quae. Perferendis alias eos sit deserunt doloremque expedita?</p>
+        </div>
+        <!-- <form> -->
+            <textarea name="comment" id="comment" cols="30" rows="5" placeholder="Write your comment here..."></textarea>
+            <br>
+            <button id="submit" type="submit">Submit</button>
+        <!-- </form> -->
+    </section>
+    <script>
+        // step-1: get the comment text area value
+        document.getElementById('submit')
+        .addEventListener('click',function(){
+            // step-2: get the text written in the text area
+            const commentField = document.getElementById('comment');
+            const newComment=commentField.value;
+            // step-3: get the parent node where we want to add the new comment
+            const commentContainer = document.getElementById('comment-container');
+            // step-4: create a new paragraph element
+            const commentElement=document.createElement('p');
+            commentElement.classList.add('comment');
+            commentElement.innerText=newComment;
+            // step:5: add a class to the new comment
+            commentContainer.appendChild(commentElement);
+            // step-6: clear the text area after submitting
+            commentField.value='';
+
+        })
+    </script>
+</body>
+</html>
