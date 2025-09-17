@@ -20,8 +20,18 @@
     <br>
     <button id="btn-make-green">Green Button</button>
 
+    <!-- add event listener -->
+     <button id="btn-make-orange">Orange Button</button>
+    <br>
+    <button id="btn-make-gold">Gold Button</button>
+
     <script>
-        
+        document.getElementById('btn-make-orange').addEventListener('click',function makeOrange(){
+            document.body.style.backgroundColor = 'orange';
+        })
+        document.getElementById('btn-make-gold').addEventListener('click',function makeGold(){
+            document.body.style.backgroundColor = 'gold';
+        })
     </script>
 
     <script src="./js/events.js"></script>
