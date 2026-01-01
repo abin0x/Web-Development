@@ -1,0 +1,15 @@
+/* 1. Descendant Selector (A B) */
+/* .parent এর ভেতরে যত <p> আছে সবার কালার ব্লু হবে */
+.parent p { color: blue; } 
+
+/* 2. Child Selector (A > B) */
+/* শুধু .parent এর সরাসরি নিচে থাকা <p> কে ধরবে, .wrapper এর ভেতরেরটা নয় */
+.parent > p { font-weight: bold; }
+
+/* 3. Adjacent Sibling Selector (A + B) */
+/* <span> এর ঠিক পরেই যদি কোনো <p> থাকে, শুধু তাকেই ধরবে (Sibling 1) */
+span + p { color: red; }
+
+/* 4. General Sibling Selector (A ~ B) */
+/* <span> এর পরে যতগুলো <p> আছে সবাইকে ধরবে (Sibling 1 & 2) */
+span ~ p { background: yellow; }
