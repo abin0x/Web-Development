@@ -4,6 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        /* Exact Match: শুধু টাইপ টেক্সটকে স্টাইল করবে */
+input[type="text"] { border: 20px solid blue; }
+
+/* Starts with (^=): যেসব লিঙ্কের শুরুতে https আছে সেখানে একটি লক আইকন দিবে */
+a[href^="https"]::before { content: "🔒 "; }
+
+/* Ends with ($=): যেসব লিঙ্কের শেষে .pdf আছে তাদের কালার লাল হবে */
+a[href$=".pdf"] { color: red; }
+
+/* Contains (*=): যেসব লিঙ্কে 'google' শব্দটা আছে */
+a[href*="google"] { text-decoration: underline; }
+    </style>
 </head>
 <body>
     <form>
