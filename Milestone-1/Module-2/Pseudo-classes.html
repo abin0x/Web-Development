@@ -4,20 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        /* Pseudo-classes (States & Logic) */
+.user-list li {
+  padding: 10px;
+  list-style: none;
+}
+
+/* জোড় সংখ্যক (Even) আইটেমগুলোকে আলাদা কালার দেওয়া */
+.user-list li:nth-child(even) {
+  background-color: #f4f4f4;
+}
+
+/* বাটনের হোভার এবং ফোকাস স্টেট */
+.primary-btn {
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.primary-btn:hover { background-color: #007bff; color: white; }
+.primary-btn:active { transform: scale(0.95); } /* ক্লিক করলে দেবে যাবে */
+
+/* Pseudo-elements (Visual Decoration) */
+.primary-btn::after {
+  content: " →"; /* HTML ছাড়া আইকন যোগ করা */
+  font-weight: bold;
+}
+
+.user-list li::before {
+  content: "👤 "; /* প্রতিটি লিস্টের আগে আইকন ইনজেক্ট করা */
+}
+    </style>
 </head>
 <body>
-    /* Pseudo-classes (State) */
-.btn:hover { background: darkblue; } /* মাউস নিলে */
-.btn:focus { outline: 3px solid orange; } /* ক্লিক করা অবস্থায় */
-li:nth-child(2n) { background: #eee; } /* প্রতি জোড় সংখ্যক আইটেম */
+    
 
-/* Pseudo-elements (Content injection) */
-.price::before { content: "$"; font-size: 12px; }
-.card::after { 
-  content: ""; 
-  display: block; 
-  height: 2px; 
-  background: red; 
-}
+    <div class="list-container">
+  <ul class="user-list">
+    <li>Alex - Developer</li>
+    <li>Sarah - Designer</li>
+    <li>John - Manager</li>
+    <li>Doe - Intern</li>
+  </ul>
+  <button class="primary-btn">Hover Me</button>
+</div>
 </body>
 </html>
