@@ -33,3 +33,7 @@ li{
     text-align: center;
     margin-top: 20px;
 }
+a {
+    color: #2196F3; /* Blue */
+    text-decoration: none;
+}
