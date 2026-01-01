@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahmudul Hasan Abin — Full Stack Developer</title>
+    <link rel="icon" type="image/png" href="./img/favicon (1).png">
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        :root {
+            --primary: #3533cd;
+            --primary-light: #4a48d8;
+            --dark: #000000;
+            --darker: #0a0820;
+            --light: #ffffff;
+            --gray: rgba(255, 255, 255, 0.7);
+            --light-gray: rgba(255, 255, 255, 0.5);
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 30%, rgba(53, 51, 205, 0.9) 100%);
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.03));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .left-panel {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .right-panel {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(53, 51, 205, 0.3);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .logo-icon i {
+            font-size: 24px;
+        }
+
+        .logo-text h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .logo-text p {
+            font-size: 14px;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+
+        .intro h2 {
+            font-size: 32px;
+            margin-bottom: 15px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--light), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .intro p {
+            color: var(--gray);
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .notify-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .notify-input {
+            flex: 1;
+            padding: 14px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--light);
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .notify-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(53, 51, 205, 0.2);
+        }
+
+        .notify-btn {
+            padding: 14px 24px;
+            border-radius: 10px;
+            border: none;
+            background: var(--primary);
+            color: var(--light);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .notify-btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .notify-btn:disabled {
+            background: var(--light-gray);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .form-message {
+            margin-top: 15px;
+            font-size: 14px;
+            color: var(--light-gray);
+        }
+
+        .section-title {
+            font-size: 20px;
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-weight: 600;
+        }
+
+        .project {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s;
+            position: relative;
+        }
+
+        .project:hover {
+            transform: translateY(-5px);
+            border-color: rgba(53, 51, 205, 0.3);
+        }
+
+        .project h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--light);
+        }
+
+        .project p {
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .features {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .features li {
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .tech-tag {
+            background: rgba(53, 51, 205, 0.2);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: 1px solid rgba(53, 51, 205, 0.3);
+        }
+
+        .project-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            color: var(--light);
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .project-link:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(53, 51, 205, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contact-text {
+            flex: 1;
+        }
+
+        .contact-text strong {
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .contact-text span {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .social-link {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .social-link:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .skill-tag {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .education-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+        }
+
+        .education-item h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .education-item p {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .card {
+                padding: 25px;
+            }
+            
+            .notify-form {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card left-panel">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Mahmudul Hasan Abin</h1>
+                    <p>Full Stack Web Developer | Python | Django</p>
+                </div>
+            </div>
+            
+            <div class="intro">
+                <h2>Full Stack Developer</h2>
+                <p>Dynamic Web Developer with competitive coding expertise, proficient in HTML, CSS, JavaScript, and Django. Skilled at crafting responsive, user-focused applications and swiftly mastering new technologies to elevate project success.</p>
+                
+                <!-- <div class="status-badge">
+                    <i class="fas fa-rocket"></i> Portfolio Coming Soon
+                </div> -->
+                
+                <p>I'm working on something useful — a clean portfolio and a place to share thoughts. Sign up and I'll let you know when it's ready.</p>
+                
+                <!-- <div class="notify-form">
+                    <input type="email" class="notify-input" placeholder="Your email address" required>
+                    <button class="notify-btn" id="notifyBtn">Notify Me</button>
+                </div>
+                <div class="form-message" id="formMessage"></div> -->
+            </div>
+            
+            <h3 class="section-title">Personal Projects</h3>
+            
+            <div class="project">
+                <h3>Smart Library Management System</h3>
+                <p>Comprehensive library management solution with book tracking and user management</p>
+                <ul class="features">
+                    <li>Allows the admin to add, categorize, and track books by author, category, and availability</li>
+                    <li>Enables quick issue and return processes, with fine calculation for overdue books</li>
+                    <li>Keeps a record of borrowing history for each user, including overdue books</li>
+                </ul>
+                <div class="tech-stack">
+                    <span class="tech-tag">Django</span>
+                    <span class="tech-tag">HTML</span>
+                    <span class="tech-tag">CSS</span>
+                    <span class="tech-tag">JavaScript</span>
+                    <span class="tech-tag">PostgreSQL</span>
+                </div>
+                <div class="project-links">
+                    <a href="#" class="project-link">
+                        <i class="fas fa-external-link-alt"></i> Live Demo
+                    </a>
+                    <a href="#" class="project-link">
+                        <i class="fab fa-github"></i> Source Code
+                    </a>
+                </div>
+            </div>
+            
+            <div class="project">
+                <h3>University Management System</h3>
+                <p>Academic management platform for students, teachers, and course representatives</p>
+                <ul class="features">
+                    <li>Personalized notifications with email alerts for schedules, assignments, and updates</li>
+                    <li>Teachers manage courses, assignments, and grades; students track schedules and due dates</li>
+                    <li>CRs manage attendance, notifications, and ensure only enrolled students submit assignments</li>
+                </ul>
+                <div class="tech-stack">
+                    <span class="tech-tag">Django</span>
+                    <span class="tech-tag">HTML</span>
+                    <span class="tech-tag">CSS</span>
+                    <span class="tech-tag">JavaScript</span>
+                    <span class="tech-tag">PostgreSQL</span>
+                </div>
+                <div class="project-links">
+                    <a href="#" class="project-link">
+                        <i class="fas fa-external-link-alt"></i> Live Demo
+                    </a>
+                    <a href="#" class="project-link">
+                        <i class="fab fa-github"></i> Source Code
+                    </a>
+                </div>
+            </div>
+            
+            <div class="project">
+                <h3>Online Course School</h3>
+                <p>E-learning platform with secure enrollment and dynamic dashboards</p>
+                <ul class="features">
+                    <li>Users register with email verification for secure access</li>
+                    <li>SSLCommerz ensures safe payment processing for course enrollments</li>
+                    <li>Teachers and students have dynamic dashboards to manage courses and track progress</li>
+                    <li>Users can enroll in courses, track progress, filter by department, and review courses</li>
+                </ul>
+                <div class="tech-stack">
+                    <span class="tech-tag">Django</span>
+                    <span class="tech-tag">HTML</span>
+                    <span class="tech-tag">CSS</span>
+                    <span class="tech-tag">JavaScript</span>
+                    <span class="tech-tag">PostgreSQL</span>
+                </div>
+                <div class="project-links">
+                    <a href="#" class="project-link">
+                        <i class="fas fa-external-link-alt"></i> Live Demo
+                    </a>
+                    <a href="#" class="project-link">
+                        <i class="fab fa-github"></i> Source Code
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card right-panel">
+            
+            
+            <h3 class="section-title">Technical Skills</h3>
+            
+            <div class="skills-container">
+                <span class="skill-tag">Python</span>
+                <span class="skill-tag">Django</span>
+                <span class="skill-tag">Django Rest Framework</span>
+                <span class="skill-tag">JavaScript</span>
+                <span class="skill-tag">HTML</span>
+                <span class="skill-tag">CSS</span>
+                <span class="skill-tag">Bootstrap</span>
+                <span class="skill-tag">PostgreSQL</span>
+                <span class="skill-tag">MySQL</span>
+                <span class="skill-tag">SQLite</span>
+                <span class="skill-tag">C++</span>
+                <span class="skill-tag">C</span>
+                <span class="skill-tag">Git</span>
+            </div>
+            
+            <h3 class="section-title">Education</h3>
+            
+            <div class="education-item">
+                <h3>BSc. in Computer Science and Engineering</h3>
+                <p>Hajee Mohammad Danesh Science & Technology University, Dinajpur</p>
+            </div>
+            
+            <div class="education-item">
+                <h3>Higher Secondary Certificate (HSC)</h3>
+                <p>Govt. Rajendra College, Faridpur</p>
+            </div>
+            
+            <h3 class="section-title">Languages & Tools</h3>
+            
+            <div class="skills-container">
+                <span class="skill-tag">Bengali</span>
+                <span class="skill-tag">English</span>
+                <span class="skill-tag">VSCode</span>
+                <span class="skill-tag">Sublime Text</span>
+                <span class="skill-tag">Codeblocks</span>
+            </div>
+            <h3 class="section-title">Contact Information</h3>
+            
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-text">
+                        <strong>Email</strong>
+                        <span>mahmudulabin@gmail.com</span>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="contact-text">
+                        <strong>Phone</strong>
+                        <span>+880 1780 94 62 49</span>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="contact-text">
+                        <strong>Location</strong>
+                        <span>Dinajpur, Bangladesh</span>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="contact-text">
+                        <strong>Portfolio</strong>
+                        <span>abin0x.netlify.app</span>
+                    </div>
+                </div>
+            </div>
+            
+            <h3 class="section-title">Connect With Me</h3>
+            
+            <div class="social-links">
+                <a href="https://github.com/abin0x" class="social-link" target="_blank">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://linkedin.com/in/abin0x" class="social-link" target="_blank">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="mailto:mahmudulabin@gmail.com" class="social-link">
+                    <i class="fas fa-envelope"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize EmailJS with your public key
+        emailjs.init("EISUnNKEoaMRVx9dz"); // You need to replace this with your actual EmailJS public key
+
+        // Email notification form
+        const notifyForm = document.querySelector('.notify-form');
+        const notifyInput = document.querySelector('.notify-input');
+        const notifyBtn = document.getElementById('notifyBtn');
+        const formMessage = document.getElementById('formMessage');
+        
+        notifyForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = notifyInput.value.trim();
+            
+            if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+                showMessage('Please enter a valid email address.', 'error');
+                return;
+            }
+            
+            // Disable the button and show loading state
+            notifyBtn.disabled = true;
+            notifyBtn.textContent = 'Sending...';
+            
+            // Send email using EmailJS
+            sendNotificationEmail(email);
+        });
+        
+        function sendNotificationEmail(email) {
+            const templateParams = {
+                to_email: 'mahmudulabin@gmail.com', // Your email address
+                from_name: 'Portfolio Notification',
+                user_email: email,
+                message: `A user with email ${email} has requested to be notified when your portfolio launches.`
+            };
+            
+            // Send email using EmailJS
+            emailjs.send('service_n7mzuzc', 'template_qumt3yu', templateParams)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    showMessage(`Thank you! We'll notify you at ${email} when the site launches.`, 'success');
+                    notifyInput.value = '';
+                }, function(error) {
+                    console.log('FAILED...', error);
+                    showMessage('Sorry, there was an error. Please try again later.', 'error');
+                })
+                .finally(function() {
+                    // Re-enable the button
+                    notifyBtn.disabled = false;
+                    notifyBtn.textContent = 'Notify Me';
+                });
+        }
+        
+        function showMessage(message, type) {
+            formMessage.textContent = message;
+            formMessage.style.color = type === 'success' ? 'var(--primary)' : '#ff6b6b';
+            
+            // Reset message after 5 seconds
+            setTimeout(() => {
+                formMessage.textContent = '';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

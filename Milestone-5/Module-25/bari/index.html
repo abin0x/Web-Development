@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barikoi Route Visualization (Bangla/English)</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #007AFF;
+            --primary-dark: #0056CC;
+            --secondary: #6C757D;
+            --success: #28A745;
+            --danger: #DC3545;
+            --warning: #FFC107;
+            --light: #F8F9FA;
+            --dark: #212529;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Noto Sans Bengali', 'Noto Sans', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Left Panel Styles */
+        .left-panel {
+            width: 450px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .language-toggle {
+            display: flex;
+            background: rgba(255,255,255,0.2);
+            border-radius: 30px;
+            padding: 4px;
+            margin-top: 15px;
+        }
+
+        .language-toggle button {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .language-toggle button.active {
+            background: white;
+            color: var(--primary);
+        }
+
+        .content {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--light);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            color: var(--primary);
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .input-field {
+            position: relative;
+        }
+
+        .input-field label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+
+        .input-field input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #E1E5E9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: white;
+        }
+
+        .input-field input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
+        }
+
+        .input-field i {
+            position: absolute;
+            right: 16px;
+            top: 38px;
+            color: var(--secondary);
+        }
+
+        .coordinate-inputs {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .coordinate-inputs input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #E1E5E9;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .search-type-toggle {
+            display: flex;
+            background: #f0f0f0;
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 10px;
+        }
+
+        .search-type-toggle button {
+            background: transparent;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            flex: 1;
+            font-size: 0.85rem;
+        }
+
+        .search-type-toggle button.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .suggestions {
+            background: white;
+            border: 1px solid #E1E5E9;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            position: absolute;
+            z-index: 1000;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .suggestions.active {
+            display: block;
+        }
+
+        .suggestions div {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: var(--transition);
+        }
+
+        .suggestions div:last-child {
+            border-bottom: none;
+        }
+
+        .suggestions div:hover {
+            background-color: #f5f7fa;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 1rem;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: var(--dark);
+        }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: var(--secondary);
+            margin-bottom: 6px;
+        }
+
+        .info-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .info-value.distance {
+            color: var(--success);
+        }
+
+        .info-value.duration {
+            color: var(--primary);
+        }
+
+        .address-details {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #E1E5E9;
+        }
+
+        .address-item {
+            display: flex;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .address-label {
+            font-weight: 600;
+            min-width: 100px;
+            color: var(--secondary);
+        }
+
+        .address-value {
+            flex: 1;
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--success);
+        }
+
+        .status-indicator.loading {
+            background-color: var(--warning);
+            animation: pulse 1.5s infinite;
+        }
+
+        .status-indicator.error {
+            background-color: var(--danger);
+        }
+
+        .status-text {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .attribution {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--secondary);
+            padding: 16px 20px;
+            border-top: 1px solid #eee;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Right Panel Styles */
+        .right-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        #map {
+            flex: 1;
+            border-radius: 0;
+        }
+
+        .map-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .map-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: white;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--dark);
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .map-btn:hover {
+            background: var(--light);
+            transform: scale(1.05);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .left-panel {
+                width: 100%;
+                height: 40vh;
+            }
+            
+            .right-panel {
+                height: 60vh;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .info-row {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Panel -->
+        <div class="left-panel">
+            <div class="header">
+                <div class="logo">
+                    <i class="fas fa-route"></i>
+                    <span>রুট ভিজ্যুয়ালাইজেশন</span>
+                </div>
+                <div class="subtitle">Barikoi + Leaflet — বাংলা/English</div>
+                
+                <div class="language-toggle">
+                    <button class="active">বাংলা</button>
+                    <button>English</button>
+                </div>
+            </div>
+            
+            <div class="content">
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-search-location"></i>
+                        <span>রুট সন্ধান করুন</span>
+                    </div>
+                    
+                    <div class="input-group">
+                        <!-- Origin Input -->
+                        <div class="input-field">
+                            <label for="origin">শুরু করার স্থান</label>
+                            <div class="search-type-toggle" id="origin-toggle">
+                                <button class="active" data-type="address">ঠিকানা</button>
+                                <button data-type="coordinates">স্থানাংক</button>
+                            </div>
+                            <div id="origin-address-group">
+                                <input id="origin" type="text" placeholder="শুরু করার স্থান লিখুন (বাংলা/ইংরেজি)">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <div id="origin-suggest" class="suggestions"></div>
+                            </div>
+                            <div id="origin-coords-group" style="display: none;">
+                                <div class="coordinate-inputs">
+                                    <input type="text" id="origin-lat" placeholder="অক্ষাংশ (23.8103)">
+                                    <input type="text" id="origin-lng" placeholder="দ্রাঘিমাংশ (90.4125)">
+                                </div>
+                                <button class="btn btn-warning" id="origin-geocode-btn" style="margin-top: 8px; padding: 8px 12px;">
+                                    <i class="fas fa-search"></i>
+                                    <span>স্থানাংক থেকে ঠিকানা খুঁজুন</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Destination Input -->
+                        <div class="input-field">
+                            <label for="destination">গন্তব্য স্থান</label>
+                            <div class="search-type-toggle" id="dest-toggle">
+                                <button class="active" data-type="address">ঠিকানা</button>
+                                <button data-type="coordinates">স্থানাংক</button>
+                            </div>
+                            <div id="dest-address-group">
+                                <input id="destination" type="text" placeholder="গন্তব্য স্থান লিখুন (বাংলা/ইংরেজি)">
+                                <i class="fas fa-flag-checkered"></i>
+                                <div id="dest-suggest" class="suggestions"></div>
+                            </div>
+                            <div id="dest-coords-group" style="display: none;">
+                                <div class="coordinate-inputs">
+                                    <input type="text" id="dest-lat" placeholder="অক্ষাংশ (23.8103)">
+                                    <input type="text" id="dest-lng" placeholder="দ্রাঘিমাংশ (90.4125)">
+                                </div>
+                                <button class="btn btn-warning" id="dest-geocode-btn" style="margin-top: 8px; padding: 8px 12px;">
+                                    <i class="fas fa-search"></i>
+                                    <span>স্থানাংক থেকে ঠিকানা খুঁজুন</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button id="drawBtn" class="btn btn-primary">
+                            <i class="fas fa-directions"></i>
+                            <span>রুট দেখাও</span>
+                        </button>
+                        <button id="clearBtn" class="btn btn-secondary">
+                            <i class="fas fa-eraser"></i>
+                            <span>পরিষ্কার করুন</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-info-circle"></i>
+                        <span>রুট তথ্য</span>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-item">
+                            <div class="info-label">মোট দূরত্ব</div>
+                            <div class="info-value distance" id="distance">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">আনুমানিক সময়</div>
+                            <div class="info-value duration" id="duration">-</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-map-pin"></i>
+                        <span>স্থান তথ্য</span>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button id="reverseGeocodeBtn" class="btn btn-warning">
+                            <i class="fas fa-crosshairs"></i>
+                            <span>বর্তমান অবস্থান</span>
+                        </button>
+                    </div>
+                    
+                    <div class="address-details" id="addressDetails">
+                        <div class="address-item">
+                            <div class="address-label">ঠিকানা:</div>
+                            <div class="address-value" id="address">-</div>
+                        </div>
+                        <div class="address-item">
+                            <div class="address-label">এলাকা:</div>
+                            <div class="address-value" id="area">-</div>
+                        </div>
+                        <div class="address-item">
+                            <div class="address-label">জেলা:</div>
+                            <div class="address-value" id="district">-</div>
+                        </div>
+                        <div class="address-item">
+                            <div class="address-label">বিভাগ:</div>
+                            <div class="address-value" id="division">-</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="status-bar">
+                    <div class="status-indicator" id="statusIndicator"></div>
+                    <div class="status-text" id="statusText">প্রস্তুত: রুট সন্ধান করতে শুরু করুন</div>
+                </div>
+            </div>
+            
+            <div class="attribution">
+                Map tiles by OpenStreetMap & Esri Satellite. Route data via Barikoi.
+            </div>
+        </div>
+        
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <div id="map"></div>
+            
+            <div class="map-controls">
+                <button class="map-btn" id="locateBtn" title="আমার অবস্থান">
+                    <i class="fas fa-location-arrow"></i>
+                </button>
+                <button class="map-btn" id="fullscreenBtn" title="পূর্ণ স্ক্রীন">
+                    <i class="fas fa-expand"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const API_KEY = 'bkoi_cc4819bb719431cc54b8fcf94a6fdd905b88386903b185ec2e62985302940e6e'; // replace with your Barikoi API key
+
+        // Initialize map
+        const map = L.map('map').setView([23.7509, 90.3936], 13);
+        let satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { 
+            attribution: 'Esri Satellite' 
+        }).addTo(map);
+        
+        let osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { 
+            attribution: '© OpenStreetMap contributors' 
+        });
+
+        L.control.layers({ 'Satellite': satellite, 'OSM': osm }).addTo(map);
+
+        let routeLayer = null, originMarker = null, destinationMarker = null;
+        let currentLocationMarker = null;
+        const statusEl = document.getElementById('statusText');
+        const statusIndicator = document.getElementById('statusIndicator');
+        const distanceEl = document.getElementById('distance');
+        const durationEl = document.getElementById('duration');
+        
+        // Address elements
+        const addressEl = document.getElementById('address');
+        const areaEl = document.getElementById('area');
+        const districtEl = document.getElementById('district');
+        const divisionEl = document.getElementById('division');
+
+        // Search type toggles
+        const originToggle = document.getElementById('origin-toggle');
+        const destToggle = document.getElementById('dest-toggle');
+        const originAddressGroup = document.getElementById('origin-address-group');
+        const originCoordsGroup = document.getElementById('origin-coords-group');
+        const destAddressGroup = document.getElementById('dest-address-group');
+        const destCoordsGroup = document.getElementById('dest-coords-group');
+
+        function setStatus(text, type = 'ready') {
+            statusEl.textContent = text;
+            
+            // Update status indicator
+            statusIndicator.className = 'status-indicator';
+            if (type === 'loading') {
+                statusIndicator.classList.add('loading');
+            } else if (type === 'error') {
+                statusIndicator.classList.add('error');
+            }
+        }
+
+        function updateRouteInfo(distance, duration) {
+            distanceEl.textContent = distance ? `${(distance/1000).toFixed(2)} km` : '-';
+            durationEl.textContent = duration ? `${Math.round(duration/60)} min` : '-';
+        }
+
+        function clearAddressInfo() {
+            addressEl.textContent = '-';
+            areaEl.textContent = '-';
+            districtEl.textContent = '-';
+            divisionEl.textContent = '-';
+        }
+
+        // Setup search type toggles
+        function setupSearchToggle(toggleElement, addressGroup, coordsGroup) {
+            const buttons = toggleElement.querySelectorAll('button');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    buttons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    if (button.dataset.type === 'address') {
+                        addressGroup.style.display = 'block';
+                        coordsGroup.style.display = 'none';
+                    } else {
+                        addressGroup.style.display = 'none';
+                        coordsGroup.style.display = 'block';
+                    }
+                });
+            });
+        }
+
+        // Initialize search toggles
+        setupSearchToggle(originToggle, originAddressGroup, originCoordsGroup);
+        setupSearchToggle(destToggle, destAddressGroup, destCoordsGroup);
+
+        async function fetchSuggestions(query, lang = 'bangla') {
+            if (!query) return [];
+            try {
+                const url = `https://barikoi.xyz/v2/api/search/autocomplete/place?api_key=${API_KEY}&q=${encodeURIComponent(query)}&bangla=${lang === 'bangla'}&country_code=bd`;
+                const res = await fetch(url);
+                const data = await res.json();
+                return data.places || [];
+            } catch(err) { 
+                console.error(err); 
+                return []; 
+            }
+        }
+
+        // Reverse Geocoding Function
+        async function reverseGeocode(lat, lng, updateInput = null) {
+            setStatus('অবস্থান সনাক্ত করা হচ্ছে...', 'loading');
+            
+            try {
+                const url = `https://barikoi.xyz/v2/api/search/reverse/geocode?api_key=${API_KEY}&longitude=${lng}&latitude=${lat}&country=true&district=true&division=true&address=true&area=true&bangla=true`;
+                const res = await fetch(url);
+                const data = await res.json();
+                
+                if (data.place) {
+                    const place = data.place;
+                    
+                    // Update address information
+                    addressEl.textContent = place.address_bn || place.address || '-';
+                    areaEl.textContent = place.area_bn || place.area || '-';
+                    districtEl.textContent = place.district || '-';
+                    divisionEl.textContent = place.division || '-';
+                    
+                    // Update input field if specified
+                    if (updateInput === 'origin') {
+                        document.getElementById('origin').value = place.address_bn || place.address;
+                        document.getElementById('origin').dataset.lat = lat;
+                        document.getElementById('origin').dataset.lng = lng;
+                    } else if (updateInput === 'destination') {
+                        document.getElementById('destination').value = place.address_bn || place.address;
+                        document.getElementById('destination').dataset.lat = lat;
+                        document.getElementById('destination').dataset.lng = lng;
+                    }
+                    
+                    setStatus('অবস্থান সনাক্ত করা হয়েছে');
+                    
+                    // Add marker to map
+                    if (currentLocationMarker) {
+                        map.removeLayer(currentLocationMarker);
+                    }
+                    
+                    currentLocationMarker = L.marker([lat, lng])
+                        .addTo(map)
+                        .bindPopup(`<b>বর্তমান অবস্থান:</b><br>${place.address_bn || place.address}`)
+                        .openPopup();
+                        
+                    // Center map on the location
+                    map.setView([lat, lng], 16);
+                    
+                    return place;
+                } else {
+                    setStatus('অবস্থান সনাক্ত করা যায়নি', 'error');
+                    clearAddressInfo();
+                }
+            } catch(err) {
+                console.error('Reverse geocoding error:', err);
+                setStatus('অবস্থান সনাক্ত করতে সমস্যা হয়েছে', 'error');
+                clearAddressInfo();
+            }
+        }
+
+        function setupAutocomplete(inputEl, suggestEl) {
+            let timeout = null;
+            
+            inputEl.addEventListener('input', () => {
+                clearTimeout(timeout);
+                const q = inputEl.value.trim();
+                if (!q) { 
+                    suggestEl.innerHTML = ''; 
+                    suggestEl.classList.remove('active');
+                    return; 
+                }
+                
+                timeout = setTimeout(async () => {
+                    const lang = /[\u0980-\u09FF]/.test(q) ? 'bangla' : 'english';
+                    const places = await fetchSuggestions(q, lang);
+                    
+                    if (places.length > 0) {
+                        suggestEl.innerHTML = places.map(p => {
+                            const display = lang === 'bangla' ? (p.address_bn || p.address) : p.address;
+                            return `<div data-lat="${p.latitude}" data-lng="${p.longitude}" data-display="${display}">${display}</div>`;
+                        }).join('');
+                        suggestEl.classList.add('active');
+                        
+                        suggestEl.querySelectorAll('div').forEach(el => {
+                            el.addEventListener('click', () => {
+                                inputEl.value = el.dataset.display;
+                                inputEl.dataset.lat = el.dataset.lat;
+                                inputEl.dataset.lng = el.dataset.lng;
+                                suggestEl.innerHTML = '';
+                                suggestEl.classList.remove('active');
+                            });
+                        });
+                    } else {
+                        suggestEl.innerHTML = '';
+                        suggestEl.classList.remove('active');
+                    }
+                }, 300);
+            });
+            
+            // Hide suggestions when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!inputEl.contains(e.target) && !suggestEl.contains(e.target)) {
+                    suggestEl.classList.remove('active');
+                }
+            });
+        }
+
+        setupAutocomplete(document.getElementById('origin'), document.getElementById('origin-suggest'));
+        setupAutocomplete(document.getElementById('destination'), document.getElementById('dest-suggest'));
+
+        // Get coordinates from input fields
+        function getCoordinatesFromInputs(latInputId, lngInputId) {
+            const lat = parseFloat(document.getElementById(latInputId).value.trim());
+            const lng = parseFloat(document.getElementById(lngInputId).value.trim());
+            
+            if (isNaN(lat) || isNaN(lng)) {
+                return null;
+            }
+            
+            // Validate latitude and longitude ranges
+            if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+                return null;
+            }
+            
+            return { lat, lng };
+        }
+
+        // Coordinate geocoding buttons
+        document.getElementById('origin-geocode-btn').addEventListener('click', function() {
+            const coords = getCoordinatesFromInputs('origin-lat', 'origin-lng');
+            if (coords) {
+                reverseGeocode(coords.lat, coords.lng, 'origin');
+            } else {
+                setStatus('অবৈধ স্থানাংক। দয়া করে সঠিক অক্ষাংশ এবং দ্রাঘিমাংশ লিখুন।', 'error');
+            }
+        });
+
+        document.getElementById('dest-geocode-btn').addEventListener('click', function() {
+            const coords = getCoordinatesFromInputs('dest-lat', 'dest-lng');
+            if (coords) {
+                reverseGeocode(coords.lat, coords.lng, 'destination');
+            } else {
+                setStatus('অবৈধ স্থানাংক। দয়া করে সঠিক অক্ষাংশ এবং দ্রাঘিমাংশ লিখুন।', 'error');
+            }
+        });
+
+        async function drawRoute() {
+            let originLat, originLng, destLat, destLng;
+
+            // Get origin coordinates based on search type
+            if (originToggle.querySelector('.active').dataset.type === 'address') {
+                originLat = document.getElementById('origin').dataset.lat;
+                originLng = document.getElementById('origin').dataset.lng;
+            } else {
+                const originCoords = getCoordinatesFromInputs('origin-lat', 'origin-lng');
+                if (!originCoords) {
+                    setStatus('শুরু করার স্থানের স্থানাংক সঠিকভাবে নির্বাচিত হয়নি।', 'error');
+                    return;
+                }
+                originLat = originCoords.lat;
+                originLng = originCoords.lng;
+            }
+
+            // Get destination coordinates based on search type
+            if (destToggle.querySelector('.active').dataset.type === 'address') {
+                destLat = document.getElementById('destination').dataset.lat;
+                destLng = document.getElementById('destination').dataset.lng;
+            } else {
+                const destCoords = getCoordinatesFromInputs('dest-lat', 'dest-lng');
+                if (!destCoords) {
+                    setStatus('গন্তব্য স্থানের স্থানাংক সঠিকভাবে নির্বাচিত হয়নি।', 'error');
+                    return;
+                }
+                destLat = destCoords.lat;
+                destLng = destCoords.lng;
+            }
+
+            if (!originLat || !originLng || !destLat || !destLng) {
+                setStatus('শুরু বা গন্তব্য স্থান সঠিকভাবে নির্বাচিত হয়নি।', 'error');
+                return;
+            }
+
+            setStatus('রুট গণনা করা হচ্ছে...', 'loading');
+            document.getElementById('drawBtn').disabled = true;
+            updateRouteInfo(null, null);
+
+            const pointsParam = `${originLng},${originLat};${destLng},${destLat}`;
+            const url = `https://barikoi.xyz/v2/api/route/${pointsParam}?api_key=${API_KEY}&geometries=geojson`;
+
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                if (!data.routes || data.routes.length === 0) { 
+                    setStatus('রুট পাওয়া যায়নি।', 'error'); 
+                    return; 
+                }
+                
+                const route = data.routes[0];
+
+                if (routeLayer) { 
+                    map.removeLayer(routeLayer); 
+                    routeLayer = null; 
+                }
+                if (originMarker) { 
+                    map.removeLayer(originMarker); 
+                    originMarker = null; 
+                }
+                if (destinationMarker) { 
+                    map.removeLayer(destinationMarker); 
+                    destinationMarker = null; 
+                }
+
+                routeLayer = L.geoJSON(route.geometry, { 
+                    style: { 
+                        color: '#007AFF', 
+                        weight: 6, 
+                        opacity: 0.8,
+                        lineJoin: 'round',
+                        lineCap: 'round'
+                    }
+                }).addTo(map);
+                
+                // Get display names for markers
+                let originName, destName;
+                if (originToggle.querySelector('.active').dataset.type === 'address') {
+                    originName = document.getElementById('origin').value;
+                } else {
+                    originName = `${originLat.toFixed(6)}, ${originLng.toFixed(6)}`;
+                }
+                
+                if (destToggle.querySelector('.active').dataset.type === 'address') {
+                    destName = document.getElementById('destination').value;
+                } else {
+                    destName = `${destLat.toFixed(6)}, ${destLng.toFixed(6)}`;
+                }
+                
+                originMarker = L.marker([originLat, originLng]).addTo(map)
+                    .bindPopup(`<b>শুরু:</b> ${originName}`)
+                    .openPopup();
+                
+                destinationMarker = L.marker([destLat, destLng]).addTo(map)
+                    .bindPopup(`<b>গন্তব্য:</b> ${destName}`);
+
+                map.fitBounds(routeLayer.getBounds().pad(0.2));
+
+                updateRouteInfo(route.distance, route.duration);
+                setStatus(`রুট পাওয়া গেছে! দূরত্ব: ${(route.distance/1000).toFixed(2)} km, আনুমানিক সময়: ${Math.round(route.duration/60)} min`);
+
+            } catch(err) { 
+                console.error(err); 
+                setStatus('রুট আনতে সমস্যা: ' + err.message, 'error'); 
+            } finally { 
+                document.getElementById('drawBtn').disabled = false; 
+            }
+        }
+
+        function clearMap() {
+            if (routeLayer) { 
+                map.removeLayer(routeLayer); 
+                routeLayer = null; 
+            }
+            if (originMarker) { 
+                map.removeLayer(originMarker); 
+                originMarker = null; 
+            }
+            if (destinationMarker) { 
+                map.removeLayer(destinationMarker); 
+                destinationMarker = null; 
+            }
+            if (currentLocationMarker) {
+                map.removeLayer(currentLocationMarker);
+                currentLocationMarker = null;
+            }
+            
+            // Clear address inputs
+            document.getElementById('origin').value = ''; 
+            document.getElementById('origin').dataset.lat = '';
+            document.getElementById('origin').dataset.lng = '';
+            
+            document.getElementById('destination').value = ''; 
+            document.getElementById('destination').dataset.lat = '';
+            document.getElementById('destination').dataset.lng = '';
+            
+            // Clear coordinate inputs
+            document.getElementById('origin-lat').value = '';
+            document.getElementById('origin-lng').value = '';
+            document.getElementById('dest-lat').value = '';
+            document.getElementById('dest-lng').value = '';
+            
+            updateRouteInfo(null, null);
+            clearAddressInfo();
+            setStatus('পরিষ্কার হয়েছে');
+        }
+
+        // Locate user button functionality
+        document.getElementById('locateBtn').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                setStatus('আপনার অবস্থান খুঁজে বের করা হচ্ছে...', 'loading');
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    
+                    // Perform reverse geocoding
+                    reverseGeocode(lat, lng);
+                    
+                }, function(error) {
+                    console.error('Geolocation error:', error);
+                    setStatus('আপনার অবস্থান পাওয়া যায়নি', 'error');
+                });
+            } else {
+                setStatus('ব্রাউজার অবস্থান সেবা সমর্থন করে না', 'error');
+            }
+        });
+
+        // Reverse geocode button functionality
+        document.getElementById('reverseGeocodeBtn').addEventListener('click', function() {
+            const center = map.getCenter();
+            reverseGeocode(center.lat, center.lng);
+        });
+
+        // Fullscreen button functionality
+        document.getElementById('fullscreenBtn').addEventListener('click', function() {
+            const rightPanel = document.querySelector('.right-panel');
+            
+            if (!document.fullscreenElement) {
+                if (rightPanel.requestFullscreen) {
+                    rightPanel.requestFullscreen();
+                } else if (rightPanel.webkitRequestFullscreen) {
+                    rightPanel.webkitRequestFullscreen();
+                } else if (rightPanel.msRequestFullscreen) {
+                    rightPanel.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        });
+
+        // Update fullscreen button icon based on state
+        document.addEventListener('fullscreenchange', updateFullscreenIcon);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
+        document.addEventListener('msfullscreenchange', updateFullscreenIcon);
+
+        function updateFullscreenIcon() {
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            const icon = fullscreenBtn.querySelector('i');
+            
+            if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+                icon.className = 'fas fa-compress';
+                fullscreenBtn.title = 'পূর্ণ স্ক্রীন থেকে প্রস্থান';
+            } else {
+                icon.className = 'fas fa-expand';
+                fullscreenBtn.title = 'পূর্ণ স্ক্রীন';
+            }
+        }
+
+        // Language toggle functionality
+        document.querySelectorAll('.language-toggle button').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.language-toggle button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                button.classList.add('active');
+                
+                // In a real implementation, you would update all text content based on selected language
+                // For this example, we'll just toggle some placeholder text
+                const isBangla = button.textContent === 'বাংলা';
+                
+                document.getElementById('origin').placeholder = isBangla ? 
+                    'শুরু করার স্থান লিখুন (বাংলা/ইংরেজি)' : 'Enter origin (Bangla/English)';
+                
+                document.getElementById('destination').placeholder = isBangla ? 
+                    'গন্তব্য স্থান লিখুন (বাংলা/ইংরেজি)' : 'Enter destination (Bangla/English)';
+                
+                document.getElementById('origin-lat').placeholder = isBangla ? 
+                    'অক্ষাংশ (23.8103)' : 'Latitude (23.8103)';
+                
+                document.getElementById('origin-lng').placeholder = isBangla ? 
+                    'দ্রাঘিমাংশ (90.4125)' : 'Longitude (90.4125)';
+                
+                document.getElementById('dest-lat').placeholder = isBangla ? 
+                    'অক্ষাংশ (23.8103)' : 'Latitude (23.8103)';
+                
+                document.getElementById('dest-lng').placeholder = isBangla ? 
+                    'দ্রাঘিমাংশ (90.4125)' : 'Longitude (90.4125)';
+                
+                document.getElementById('drawBtn').innerHTML = isBangla ? 
+                    '<i class="fas fa-directions"></i><span>রুট দেখাও</span>' : 
+                    '<i class="fas fa-directions"></i><span>Show Route</span>';
+                
+                document.getElementById('clearBtn').innerHTML = isBangla ? 
+                    '<i class="fas fa-eraser"></i><span>পরিষ্কার করুন</span>' : 
+                    '<i class="fas fa-eraser"></i><span>Clear</span>';
+                
+                document.getElementById('reverseGeocodeBtn').innerHTML = isBangla ? 
+                    '<i class="fas fa-crosshairs"></i><span>বর্তমান অবস্থান</span>' : 
+                    '<i class="fas fa-crosshairs"></i><span>Current Location</span>';
+                
+                document.getElementById('origin-geocode-btn').innerHTML = isBangla ? 
+                    '<i class="fas fa-search"></i><span>স্থানাংক থেকে ঠিকানা খুঁজুন</span>' : 
+                    '<i class="fas fa-search"></i><span>Find Address from Coordinates</span>';
+                
+                document.getElementById('dest-geocode-btn').innerHTML = isBangla ? 
+                    '<i class="fas fa-search"></i><span>স্থানাংক থেকে ঠিকানা খুঁজুন</span>' : 
+                    '<i class="fas fa-search"></i><span>Find Address from Coordinates</span>';
+                
+                // Update search toggle buttons
+                document.querySelectorAll('.search-type-toggle button[data-type="address"]').forEach(btn => {
+                    btn.textContent = isBangla ? 'ঠিকানা' : 'Address';
+                });
+                
+                document.querySelectorAll('.search-type-toggle button[data-type="coordinates"]').forEach(btn => {
+                    btn.textContent = isBangla ? 'স্থানাংক' : 'Coordinates';
+                });
+                
+                document.querySelectorAll('.card-title')[0].querySelector('span').textContent = isBangla ? 
+                    'রুট সন্ধান করুন' : 'Find Route';
+                
+                document.querySelectorAll('.card-title')[1].querySelector('span').textContent = isBangla ? 
+                    'রুট তথ্য' : 'Route Information';
+                    
+                document.querySelectorAll('.card-title')[2].querySelector('span').textContent = isBangla ? 
+                    'স্থান তথ্য' : 'Location Information';
+                
+                document.querySelector('.logo span').textContent = isBangla ? 
+                    'রুট ভিজ্যুয়ালাইজেশন' : 'Route Visualization';
+                    
+                document.querySelector('.subtitle').textContent = isBangla ? 
+                    'Barikoi + Leaflet — বাংলা/English' : 'Barikoi + Leaflet — Bangla/English';
+                    
+                document.querySelectorAll('.info-label')[0].textContent = isBangla ? 
+                    'মোট দূরত্ব' : 'Total Distance';
+                    
+                document.querySelectorAll('.info-label')[1].textContent = isBangla ? 
+                    'আনুমানিক সময়' : 'Estimated Time';
+                    
+                document.querySelectorAll('.address-label')[0].textContent = isBangla ? 
+                    'ঠিকানা:' : 'Address:';
+                    
+                document.querySelectorAll('.address-label')[1].textContent = isBangla ? 
+                    'এলাকা:' : 'Area:';
+                    
+                document.querySelectorAll('.address-label')[2].textContent = isBangla ? 
+                    'জেলা:' : 'District:';
+                    
+                document.querySelectorAll('.address-label')[3].textContent = isBangla ? 
+                    'বিভাগ:' : 'Division:';
+                    
+                document.getElementById('locateBtn').title = isBangla ? 
+                    'আমার অবস্থান' : 'My Location';
+                    
+                setStatus(isBangla ? 'প্রস্তুত: রুট সন্ধান করতে শুরু করুন' : 'Ready: Start searching for a route');
+            });
+        });
+
+        document.getElementById('drawBtn').addEventListener('click', drawRoute);
+        document.getElementById('clearBtn').addEventListener('click', clearMap);
+    </script>
+</body>
+</html>

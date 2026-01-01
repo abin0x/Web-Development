@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barikoi Route Finder</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .route-form {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .input-with-button {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-with-button input {
+            flex: 1;
+        }
+
+        input, select, button {
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            white-space: nowrap;
+            min-width: 120px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .map-container {
+            height: 500px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .route-info {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .info-card h4 {
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .info-card .value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .suggestions {
+            position: absolute;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            width: calc(100% - 130px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            top: 100%;
+            left: 0;
+            margin-top: 5px;
+        }
+
+        .suggestion-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s ease;
+        }
+
+        .suggestion-item:hover {
+            background: #f8f9fa;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-address {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .suggestion-area {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .suggestion-type {
+            font-size: 11px;
+            color: #888;
+            font-style: italic;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .instructions {
+            background: #f0f8ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .instruction-step {
+            margin: 8px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .instruction-step:last-child {
+            border-bottom: none;
+        }
+
+        .no-results {
+            padding: 15px;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Barikoi Route Finder</h1>
+            <p>Find the best route between two locations in Bangladesh</p>
+        </div>
+
+        <div class="route-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="startAddress">Start Address:</label>
+                    <div class="input-with-button">
+                        <input type="text" id="startAddress" placeholder="Enter starting address (e.g., Gulshan 1, Dhaka)">
+                        <button onclick="useCurrentLocation('start')" type="button">Current</button>
+                    </div>
+                    <div id="startSuggestions" class="suggestions" style="display: none;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="endAddress">End Address:</label>
+                    <div class="input-with-button">
+                        <input type="text" id="endAddress" placeholder="Enter destination address (e.g., Dhanmondi 27, Dhaka)">
+                        <button onclick="useCurrentLocation('end')" type="button">Current</button>
+                    </div>
+                    <div id="endSuggestions" class="suggestions" style="display: none;"></div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="travelMode">Travel Mode:</label>
+                    <select id="travelMode">
+                        <option value="car">Car</option>
+                        <option value="bike">Bike</option>
+                        <option value="foot">Walking</option>
+                    </select>
+                </div>
+                
+                <button onclick="calculateRoute()" style="height: 46px; margin-top: 24px;">
+                    Find Route
+                </button>
+            </div>
+        </div>
+
+        <div class="map-container">
+            <div id="map"></div>
+        </div>
+
+        <div class="route-info">
+            <h3>Route Information</h3>
+            <div id="routeDetails">
+                <div class="loading">Enter addresses and click "Find Route" to see directions</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <script>
+        // Barikoi API Configuration
+        const API_KEY = "bkoi_c61e9723652b2d3f3aba71d3220fefae40d78053834c0b2d0ac7f25755b6244b";
+        const BASE_URL = "https://barikoi.xyz/v2/api";
+
+        // Map initialization
+        let map = L.map('map').setView([23.8103, 90.4125], 12);
+        let routingControl = null;
+        let startMarker = null;
+        let endMarker = null;
+
+        // Tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Initialize autocomplete for address inputs
+        initializeAutocomplete('startAddress', 'startSuggestions');
+        initializeAutocomplete('endAddress', 'endSuggestions');
+
+        // Autocomplete functionality
+        function initializeAutocomplete(inputId, suggestionsId) {
+            const input = document.getElementById(inputId);
+            const suggestions = document.getElementById(suggestionsId);
+            let timeoutId;
+
+            input.addEventListener('input', function() {
+                clearTimeout(timeoutId);
+                const query = this.value.trim();
+                
+                if (query.length < 2) {
+                    suggestions.style.display = 'none';
+                    return;
+                }
+
+                timeoutId = setTimeout(() => {
+                    searchAllAddresses(query, suggestions, input);
+                }, 300);
+            });
+
+            // Hide suggestions when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!suggestions.contains(e.target) && e.target !== input) {
+                    suggestions.style.display = 'none';
+                }
+            });
+        }
+
+        // Search for ALL types of addresses - comprehensive search
+        async function searchAllAddresses(query, suggestionsContainer, inputElement) {
+            try {
+                // Try multiple search strategies to get comprehensive results
+                const results = await Promise.allSettled([
+                    searchAutocomplete(query),
+                    searchPlace(query),
+                    searchDistricts(query),
+                    searchSubdistricts(query),
+                    searchUnions(query)
+                ]);
+
+                const allPlaces = [];
+                
+                // Combine all results
+                results.forEach(result => {
+                    if (result.status === 'fulfilled' && result.value) {
+                        allPlaces.push(...result.value);
+                    }
+                });
+
+                // Remove duplicates based on address and coordinates
+                const uniquePlaces = removeDuplicates(allPlaces);
+                
+                displaySuggestions(uniquePlaces, suggestionsContainer, inputElement);
+                
+            } catch (error) {
+                console.error('Search error:', error);
+                suggestionsContainer.innerHTML = '<div class="no-results">Search temporarily unavailable</div>';
+                suggestionsContainer.style.display = 'block';
+            }
+        }
+
+        // Remove duplicate places
+        function removeDuplicates(places) {
+            const seen = new Set();
+            return places.filter(place => {
+                const key = `${place.latitude}-${place.longitude}-${place.address}`;
+                if (seen.has(key)) {
+                    return false;
+                }
+                seen.add(key);
+                return true;
+            });
+        }
+
+        // Search using autocomplete endpoint
+        async function searchAutocomplete(query) {
+            try {
+                const response = await fetch(
+                    `${BASE_URL}/search/autocomplete/place?api_key=${API_KEY}&q=${encodeURIComponent(query)}`
+                );
+                
+                if (!response.ok) throw new Error('Autocomplete failed');
+                
+                const data = await response.json();
+                return data.places || [];
+            } catch (error) {
+                console.error('Autocomplete search error:', error);
+                return [];
+            }
+        }
+
+        // Search using search-place endpoint
+        async function searchPlace(query) {
+            try {
+                const response = await fetch(
+                    `${BASE_URL}/search-place?api_key=${API_KEY}&q=${encodeURIComponent(query)}`
+                );
+                
+                if (!response.ok) throw new Error('Search place failed');
+                
+                const data = await response.json();
+                return data.places || [];
+            } catch (error) {
+                console.error('Search place error:', error);
+                return [];
+            }
+        }
+
+        // Search districts
+        async function searchDistricts(query) {
+            try {
+                const response = await fetch(
+                    `${BASE_URL}/search/districts?api_key=${API_KEY}&q=${encodeURIComponent(query)}`
+                );
+                
+                if (!response.ok) throw new Error('Districts search failed');
+                
+                const data = await response.json();
+                return (data.places || []).map(place => ({
+                    ...place,
+                    address: `${place.name}, ${place.district || ''}`,
+                    type: 'District'
+                }));
+            } catch (error) {
+                console.error('Districts search error:', error);
+                return [];
+            }
+        }
+
+        // Search sub-districts
+        async function searchSubdistricts(query) {
+            try {
+                const response = await fetch(
+                    `${BASE_URL}/sub_districts?api_key=${API_KEY}&q=${encodeURIComponent(query)}`
+                );
+                
+                if (!response.ok) throw new Error('Subdistricts search failed');
+                
+                const data = await response.json();
+                return (data.places || []).map(place => ({
+                    ...place,
+                    address: `${place.name}, ${place.district || ''}`,
+                    type: 'Sub-district'
+                }));
+            } catch (error) {
+                console.error('Subdistricts search error:', error);
+                return [];
+            }
+        }
+
+        // Search unions
+        async function searchUnions(query) {
+            try {
+                const response = await fetch(
+                    `${BASE_URL}/union?api_key=${API_KEY}&q=${encodeURIComponent(query)}`
+                );
+                
+                if (!response.ok) throw new Error('Unions search failed');
+                
+                const data = await response.json();
+                return (data.places || []).map(place => ({
+                    ...place,
+                    address: `${place.name}, ${place.sub_district || ''}, ${place.district || ''}`,
+                    type: 'Union'
+                }));
+            } catch (error) {
+                console.error('Unions search error:', error);
+                return [];
+            }
+        }
+
+        // Display suggestions in the UI
+        function displaySuggestions(places, suggestionsContainer, inputElement) {
+            suggestionsContainer.innerHTML = '';
+            
+            if (places && places.length > 0) {
+                // Sort by relevance (you can implement more sophisticated sorting)
+                places.sort((a, b) => {
+                    // Prioritize places with complete addresses
+                    const aScore = (a.address || '').length;
+                    const bScore = (b.address || '').length;
+                    return bScore - aScore;
+                });
+
+                // Show first 15 results to avoid overwhelming the user
+                places.slice(0, 15).forEach(place => {
+                    const item = document.createElement('div');
+                    item.className = 'suggestion-item';
+                    
+                    const address = place.address || place.name || 'Address not available';
+                    const area = place.area || place.sub_area || place.district || '';
+                    const type = place.pType || place.type || 'Location';
+                    
+                    item.innerHTML = `
+                        <div class="suggestion-address">${address}</div>
+                        ${area ? `<div class="suggestion-area">${area}</div>` : ''}
+                        <div class="suggestion-type">${type}</div>
+                    `;
+                    
+                    item.onclick = () => {
+                        inputElement.value = address;
+                        suggestionsContainer.style.display = 'none';
+                        
+                        // Store coordinates and additional data for later use
+                        if (place.latitude && place.longitude) {
+                            inputElement.dataset.lat = place.latitude;
+                            inputElement.dataset.lng = place.longitude;
+                        }
+                        inputElement.dataset.address = address;
+                        inputElement.dataset.area = area;
+                    };
+                    suggestionsContainer.appendChild(item);
+                });
+                suggestionsContainer.style.display = 'block';
+            } else {
+                suggestionsContainer.innerHTML = '<div class="no-results">No addresses found. Try a different search term.</div>';
+                suggestionsContainer.style.display = 'block';
+            }
+        }
+
+        // Enhanced geocoding function that tries multiple methods
+        async function geocodeAddress(address) {
+            try {
+                // Try multiple search methods
+                const results = await Promise.allSettled([
+                    searchAutocomplete(address),
+                    searchPlace(address)
+                ]);
+
+                let bestMatch = null;
+                
+                // Find the best match
+                results.forEach(result => {
+                    if (result.status === 'fulfilled' && result.value && result.value.length > 0) {
+                        const match = result.value[0]; // Take first result
+                        if (!bestMatch || (match.address && match.address.includes(address))) {
+                            bestMatch = match;
+                        }
+                    }
+                });
+
+                if (bestMatch) {
+                    return {
+                        lat: parseFloat(bestMatch.latitude),
+                        lng: parseFloat(bestMatch.longitude),
+                        address: bestMatch.address || address
+                    };
+                }
+                
+                throw new Error('Address not found');
+            } catch (error) {
+                throw new Error('Could not find coordinates for address: ' + error.message);
+            }
+        }
+
+        // Use current location
+        function useCurrentLocation(type) {
+            if (!navigator.geolocation) {
+                alert('Geolocation is not supported by your browser');
+                return;
+            }
+
+            const addressInput = document.getElementById(type + 'Address');
+            addressInput.placeholder = 'Getting location...';
+
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const { latitude, longitude } = position.coords;
+                    
+                    try {
+                        // Reverse geocode to get address
+                        const response = await fetch(
+                            `${BASE_URL}/search/reverse/geocode?api_key=${API_KEY}&latitude=${latitude}&longitude=${longitude}&address=true&area=true&district=true&sub_district=true`
+                        );
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.place) {
+                                const fullAddress = data.place.address || 
+                                                  `${data.place.area || ''}, ${data.place.sub_district || ''}, ${data.place.district || ''}`.trim();
+                                
+                                addressInput.value = fullAddress;
+                                addressInput.dataset.lat = latitude;
+                                addressInput.dataset.lng = longitude;
+                                addressInput.dataset.address = fullAddress;
+                                
+                                // Add marker to map
+                                if (type === 'start') {
+                                    updateMarker('start', latitude, longitude, fullAddress);
+                                } else {
+                                    updateMarker('end', latitude, longitude, fullAddress);
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Reverse geocoding failed:', error);
+                        addressInput.value = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+                        addressInput.dataset.lat = latitude;
+                        addressInput.dataset.lng = longitude;
+                    }
+                },
+                (error) => {
+                    alert('Unable to get your location: ' + error.message);
+                    addressInput.placeholder = `Enter ${type} address...`;
+                }
+            );
+        }
+
+        // Update markers on map
+        function updateMarker(type, lat, lng, address) {
+            const marker = type === 'start' ? startMarker : endMarker;
+            const color = type === 'start' ? '#28a745' : '#dc3545';
+            
+            // Remove existing marker
+            if (marker) {
+                map.removeLayer(marker);
+            }
+            
+            // Create custom icon
+            const icon = L.divIcon({
+                className: `custom-marker ${type}-marker`,
+                html: `<div style="background-color: ${color}; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>`,
+                iconSize: [20, 20],
+                iconAnchor: [10, 10]
+            });
+            
+            // Create new marker
+            const newMarker = L.marker([lat, lng], { icon: icon })
+                .addTo(map)
+                .bindPopup(`<b>${type === 'start' ? 'Start' : 'End'}</b><br>${address}`);
+            
+            if (type === 'start') {
+                startMarker = newMarker;
+            } else {
+                endMarker = newMarker;
+            }
+        }
+
+        // Calculate route
+        async function calculateRoute() {
+            const startAddress = document.getElementById('startAddress');
+            const endAddress = document.getElementById('endAddress');
+            const travelMode = document.getElementById('travelMode').value;
+            const routeDetails = document.getElementById('routeDetails');
+            
+            // Validate inputs
+            if (!startAddress.value || !endAddress.value) {
+                routeDetails.innerHTML = '<div class="error">Please enter both start and end addresses</div>';
+                return;
+            }
+
+            // Get coordinates from stored data or geocode
+            let startLat, startLng, endLat, endLng;
+            let startAddr, endAddr;
+            
+            try {
+                if (startAddress.dataset.lat && startAddress.dataset.lng) {
+                    startLat = parseFloat(startAddress.dataset.lat);
+                    startLng = parseFloat(startAddress.dataset.lng);
+                    startAddr = startAddress.dataset.address || startAddress.value;
+                } else {
+                    const startCoords = await geocodeAddress(startAddress.value);
+                    startLat = startCoords.lat;
+                    startLng = startCoords.lng;
+                    startAddr = startCoords.address || startAddress.value;
+                    startAddress.dataset.lat = startLat;
+                    startAddress.dataset.lng = startLng;
+                    startAddress.dataset.address = startAddr;
+                }
+
+                if (endAddress.dataset.lat && endAddress.dataset.lng) {
+                    endLat = parseFloat(endAddress.dataset.lat);
+                    endLng = parseFloat(endAddress.dataset.lng);
+                    endAddr = endAddress.dataset.address || endAddress.value;
+                } else {
+                    const endCoords = await geocodeAddress(endAddress.value);
+                    endLat = endCoords.lat;
+                    endLng = endCoords.lng;
+                    endAddr = endCoords.address || endAddress.value;
+                    endAddress.dataset.lat = endLat;
+                    endAddress.dataset.lng = endLng;
+                    endAddress.dataset.address = endAddr;
+                }
+
+                // Update markers with proper addresses
+                updateMarker('start', startLat, startLng, startAddr);
+                updateMarker('end', endLat, endLng, endAddr);
+
+                // Calculate route using Barikoi routing
+                await calculateBarikoiRoute(startLat, startLng, endLat, endLng, travelMode);
+
+            } catch (error) {
+                routeDetails.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            }
+        }
+
+        // Calculate route using Barikoi API
+        async function calculateBarikoiRoute(startLat, startLng, endLat, endLng, profile) {
+            const routeDetails = document.getElementById('routeDetails');
+            routeDetails.innerHTML = '<div class="loading">Calculating route...</div>';
+
+            try {
+                // Remove existing route
+                if (routingControl) {
+                    map.removeControl(routingControl);
+                }
+
+                // Use Leaflet Routing Machine
+                routingControl = L.Routing.control({
+                    waypoints: [
+                        L.latLng(startLat, startLng),
+                        L.latLng(endLat, endLng)
+                    ],
+                    routeWhileDragging: false,
+                    showAlternatives: false,
+                    fitSelectedRoutes: true,
+                    lineOptions: {
+                        styles: [{ color: '#667eea', weight: 6, opacity: 0.8 }]
+                    },
+                    createMarker: function() { return null; } // Use our custom markers
+                }).addTo(map);
+
+                // Listen for route found event
+                routingControl.on('routesfound', function(e) {
+                    const routes = e.routes;
+                    if (routes && routes.length > 0) {
+                        const route = routes[0];
+                        displayRouteInfo(route);
+                    }
+                });
+
+                routingControl.on('routingerror', function(e) {
+                    routeDetails.innerHTML = '<div class="error">Could not calculate route. Please try different addresses.</div>';
+                });
+
+            } catch (error) {
+                routeDetails.innerHTML = `<div class="error">Route calculation failed: ${error.message}</div>`;
+            }
+        }
+
+        // Display route information
+        function displayRouteInfo(route) {
+            const routeDetails = document.getElementById('routeDetails');
+            const distance = (route.summary.totalDistance / 1000).toFixed(1); // Convert to km
+            const duration = Math.round(route.summary.totalTime / 60); // Convert to minutes
+
+            let instructionsHtml = `
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h4>Distance</h4>
+                        <div class="value">${distance} km</div>
+                    </div>
+                    <div class="info-card">
+                        <h4>Estimated Time</h4>
+                        <div class="value">${duration} min</div>
+                    </div>
+                </div>
+            `;
+
+            if (route.instructions && route.instructions.length > 0) {
+                instructionsHtml += `
+                    <div class="instructions">
+                        <h4>Turn-by-Turn Directions:</h4>
+                        ${route.instructions.map((instruction, index) => `
+                            <div class="instruction-step">
+                                <strong>${index + 1}.</strong> ${instruction.text}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            routeDetails.innerHTML = instructionsHtml;
+        }
+
+        // Add custom marker styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .custom-marker {
+                background: transparent;
+                border: none;
+            }
+            .start-marker {
+                z-index: 1000;
+            }
+            .end-marker {
+                z-index: 1000;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
