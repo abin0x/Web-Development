@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    /* Pseudo-classes (State) */
+.btn:hover { background: darkblue; } /* মাউস নিলে */
+.btn:focus { outline: 3px solid orange; } /* ক্লিক করা অবস্থায় */
+li:nth-child(2n) { background: #eee; } /* প্রতি জোড় সংখ্যক আইটেম */
+
+/* Pseudo-elements (Content injection) */
+.price::before { content: "$"; font-size: 12px; }
+.card::after { 
+  content: ""; 
+  display: block; 
+  height: 2px; 
+  background: red; 
+}
+</body>
+</html>
