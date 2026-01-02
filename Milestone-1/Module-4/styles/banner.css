@@ -78,3 +78,18 @@ nav li a:hover{
 .hero-container div{
     max-width: 600px;
 }
+
+.hero-container h1{
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+.hero-container p{
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+.hero-container a{
+    text-decoration: none;
+}
+.hero-container a:hover{
+    text-decoration: underline;
+}
