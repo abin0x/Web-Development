@@ -72,3 +72,9 @@ nav li a:hover{
     background-color: black;
     color: wheat;
 }
+.highlight{
+    color: rgb(255, 0, 136);
+}
+.hero-container div{
+    max-width: 600px;
+}
