@@ -36,4 +36,3 @@ This module covers:
 
 These files are intended for educational purposes as part of the P_Hero batch learning program.
 
-saa
