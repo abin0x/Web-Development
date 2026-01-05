@@ -1,59 +1,63 @@
-// script.js - Professional Portfolio JavaScript
+/**
+ * Professional Theme Engine
+ * Developed for High-Performance Portfolios
+ */
 
-// Smooth scrolling for navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            const navbarHeight = document.querySelector('.navbar').offsetHeight;
-            const targetPosition = target.offsetTop - navbarHeight;
-            window.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'
-            });
-        }
-    });
-});
+// 1. Select DOM Elements
+const themeToggle = document.getElementById('theme-toggle');
+const themeIcon = document.querySelector('.theme-icon'); // আইকন এলিমেন্ট
+const htmlElement = document.documentElement;
 
-// Fade-in animation on scroll
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
+/**
+ * ২. ইনিশিয়ালাইজ থিম
+ * LocalStorage চেক করবে, না থাকলে সিস্টেম সেটিংস চেক করবে
+ */
+const initializeTheme = () => {
+    const savedTheme = localStorage.getItem('theme');
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    
+    const initialTheme = savedTheme || systemTheme;
+    
+    applyTheme(initialTheme);
 };
 
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
-
-document.querySelectorAll('section').forEach(section => {
-    section.style.opacity = '0';
-    section.style.transform = 'translateY(20px)';
-    section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    observer.observe(section);
-});
-
-// Navbar background change on scroll
-window.addEventListener('scroll', function() {
-    const navbar = document.querySelector('.navbar');
-    if (window.scrollY > 50) {
-        navbar.classList.add('bg-dark', 'navbar-shrink');
+/**
+ * ৩. থিম অ্যাপ্লাই ফাংশন
+ */
+const applyTheme = (theme) => {
+    // HTML-এ data-theme অ্যাট্রিবিউট সেট করা (CSS Variables-এর জন্য)
+    htmlElement.setAttribute('data-theme', theme);
+    
+    // আইকন আপডেট করা
+    if (theme === 'dark') {
+        themeToggle.innerHTML = '☀️'; // সূর্য আইকন
     } else {
-        navbar.classList.remove('bg-dark', 'navbar-shrink');
+        themeToggle.innerHTML = '🌙'; // চাঁদ আইকন
+    }
+    
+    // ভবিষ্যতে ব্যবহারের জন্য লোকাল স্টোরেজে সেভ করা
+    localStorage.setItem('theme', theme);
+};
+
+/**
+ * ৪. ইভেন্ট লিসেনার
+ */
+themeToggle.addEventListener('click', () => {
+    const currentTheme = htmlElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    
+    // স্মুথ ট্রানজিশনের জন্য একটি ক্লাস যোগ করা যেতে পারে (ঐচ্ছিক)
+    applyTheme(newTheme);
+});
+
+/**
+ * ৫. সিস্টেম সেটিং চেঞ্জ হলে অটোমেটিক থিম আপডেট
+ */
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    if (!localStorage.getItem('theme')) { // যদি ইউজার ম্যানুয়ালি কিছু সেট না করে থাকে
+        applyTheme(e.matches ? 'dark' : 'light');
     }
 });
 
-// Contact form validation (placeholder for future form)
-function validateForm() {
-    const email = document.getElementById('email');
-    if (email && !email.value.includes('@')) {
-        alert('Please enter a valid email address.');
-        return false;
-    }
-    return true;
-}
+// ইঞ্জিন রান করা
+initializeTheme();
