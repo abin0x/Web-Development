@@ -1,77 +1,135 @@
-/* Custom Styles for Professional Portfolio */
+/* 1. Global Variables & Design System */
+:root {
+    /* Colors */
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --primary-color: #667eea;
+    --primary-hover: #5a67d8;
+    --text-light: #ffffff;
+    --text-dark: #2d3748;
+    --bg-light: #f7fafc;
+    --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
+    /* Fluid Spacing & Typography (The Magic) */
+    --section-padding: clamp(3rem, 8vh, 8rem);
+    --fluid-h1: clamp(2.5rem, 5vw + 1rem, 4.5rem);
+    --fluid-lead: clamp(1.1rem, 2vw, 1.5rem);
+}
+
+/* 2. Reset & Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--text-dark);
+    line-height: 1.6;
+    background-color: var(--bg-light);
+}
+
+/* 3. Hero Section (Enhanced) */
 .hero {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--primary-gradient);
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
+    color: var(--text-light);
+    padding: 2rem;
 }
 
 .hero h1 {
-    font-weight: 700;
-    margin-bottom: 1rem;
+    font-size: var(--fluid-h1);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
 }
 
 .hero .lead {
-    font-size: 1.25rem;
-    margin-bottom: 2rem;
+    font-size: var(--fluid-lead);
+    max-width: 700px;
+    margin: 0 auto 2.5rem;
+    opacity: 0.9;
 }
 
+/* 4. Layout & Sections */
 section {
-    padding: 60px 0;
+    padding: var(--section-padding) 0;
 }
 
+/* Container Logic: Flex/Grid agnostic */
+.container-grid {
+    display: grid;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    /* Responsive Grid without Media Queries */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/* 5. Components: Cards & Buttons */
 .card {
+    background: white;
     border: none;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    transform: translateY(-10px);
+    box-shadow: var(--card-shadow-hover);
 }
 
 .btn-primary {
-    background-color: #667eea;
-    border-color: #667eea;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.3s ease;
+    display: inline-block;
 }
 
 .btn-primary:hover {
-    background-color: #5a67d8;
-    border-color: #5a67d8;
+    background-color: var(--primary-hover);
 }
 
-.navbar-brand {
-    font-weight: bold;
-    font-size: 1.5rem;
+/* 6. Advanced Responsive Logic (Grid Areas) */
+@media (min-width: 576px) {
+    .layout-wrapper {
+        display: grid;
+        grid-template-areas: 
+            "header  header  header"
+            "nav     nav     nav"
+            "sidebar main    main"
+            "ad      footer  footer";
+        grid-template-columns: 250px 1fr 1fr;
+    }
+    
+    .header  { grid-area: header; }
+    .nav     { grid-area: nav; }
+    .sidebar { grid-area: sidebar; }
+    .main    { grid-area: main; }
+    .ad      { grid-area: ad; }
+    .footer  { grid-area: footer; }
 }
 
-footer {
-    margin-top: 0;
-}
-
-/* Responsive adjustments */
+/* Mobile adjustments */
 @media (max-width: 768px) {
     .hero {
-        padding: 100px 0;
-        min-height: auto;
+        min-height: 80vh; /* Better for mobile thumb reach */
     }
-    .hero h1 {
-        font-size: 2.5rem;
-    }
-    .hero .lead {
-        font-size: 1rem;
-    }
-}
-@media screen and (min-width:576px) and (max-width:992px){
-    .container{
-        grid-template-areas: 
-        "header header header"
-        "nav    nav     nav"
-        "sidebar    main    main"
-        "adverties footer footer"
-        ;
+    .layout-wrapper {
+        display: flex;
+        flex-direction: column; /* Stack vertically on mobile */
     }
 }
