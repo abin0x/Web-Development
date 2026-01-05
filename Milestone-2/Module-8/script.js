@@ -1,20 +1,22 @@
 // script.js - Professional Portfolio JavaScript
 
 // Smooth scrolling for navigation links
-document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
+            const navbarHeight = document.querySelector('.navbar').offsetHeight;
+            const targetPosition = target.offsetTop - navbarHeight;
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
             });
         }
     });
 });
 
-// Add fade-in animation on scroll
+// Fade-in animation on scroll
 const observerOptions = {
     threshold: 0.1,
     rootMargin: '0px 0px -50px 0px'
@@ -36,7 +38,17 @@ document.querySelectorAll('section').forEach(section => {
     observer.observe(section);
 });
 
-// Simple contact form validation (if added later)
+// Navbar background change on scroll
+window.addEventListener('scroll', function() {
+    const navbar = document.querySelector('.navbar');
+    if (window.scrollY > 50) {
+        navbar.classList.add('bg-dark', 'navbar-shrink');
+    } else {
+        navbar.classList.remove('bg-dark', 'navbar-shrink');
+    }
+});
+
+// Contact form validation (placeholder for future form)
 function validateForm() {
     const email = document.getElementById('email');
     if (email && !email.value.includes('@')) {

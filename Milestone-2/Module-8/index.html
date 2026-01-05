@@ -3,87 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Professional Backend Developer Portfolio showcasing expertise in server-side development, APIs, and databases.">
+    <meta name="description" content="Professional Backend Developer Portfolio of John Doe, showcasing expertise in server-side development, APIs, and databases.">
     <title>John Doe - Backend Developer Portfolio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles/layout.css">
 </head>
 <body>
-    <header>
-        <h1>John Doe</h1>
-        <p>Backend Developer</p>
-        <nav>
-            <ul>
-                <li><a href="#about">About</a></li>
-                <li><a href="#experience">Experience</a></li>
-                <li><a href="#skills">Skills</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <section id="about">
-        <h2>About Me</h2>
-        <p>Experienced backend developer with over 5 years in building scalable server-side applications, RESTful APIs, and database-driven solutions. Proficient in modern technologies to deliver high-performance systems for web and mobile platforms.</p>
-        <img src="img/sustainable-travel-concept_23-2151049514.avif" alt="Professional Developer Image" style="max-width: 100%; height: auto;">
-    </section>
-
-    <section id="experience">
-        <h2>Professional Experience</h2>
-        <div>
-            <h3>Senior Backend Developer at TechCorp</h3>
-            <p>2020 - Present</p>
-            <p>Developed and maintained microservices architecture, optimized database queries, and integrated third-party APIs for e-commerce platforms.</p>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#home">John Doe</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#experience">Experience</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                </ul>
+            </div>
         </div>
-        <div>
-            <h3>Backend Developer at StartupXYZ</h3>
-            <p>2018 - 2020</p>
-            <p>Built REST APIs using Node.js and Express, managed MongoDB databases, and collaborated with frontend teams for seamless integration.</p>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero bg-primary text-white text-center py-5">
+        <div class="container">
+            <h1 class="display-4">John Doe</h1>
+            <p class="lead">Senior Backend Developer</p>
+            <p>Building scalable server-side solutions with modern technologies</p>
+            <a href="#contact" class="btn btn-light btn-lg">Get In Touch</a>
         </div>
     </section>
 
-    <section id="skills">
-        <h2>Technical Skills</h2>
-        <ul>
-            <li><strong>Languages:</strong> Python, JavaScript (Node.js), Java</li>
-            <li><strong>Databases:</strong> MySQL, PostgreSQL, MongoDB, Redis</li>
-            <li><strong>Frameworks:</strong> Express.js, Django, Spring Boot, FastAPI</li>
-            <li><strong>Tools & Technologies:</strong> Git, Docker, Kubernetes, AWS, RESTful APIs, GraphQL, CI/CD</li>
-        </ul>
-    </section>
-
-    <section id="projects">
-        <h2>Key Projects</h2>
-        <div>
-            <h3><a href="layout.html">REST API for User Management</a></h3>
-            <p>Developed a secure API handling user authentication, authorization, and data management using Node.js and MongoDB.</p>
-        </div>
-        <div>
-            <h3><a href="grid.html">Database-Driven Blog System</a></h3>
-            <p>Built a scalable blog platform with PostgreSQL, featuring content management and user engagement features.</p>
-        </div>
-        <div>
-            <h3><a href="flex.html">Microservices Architecture Example</a></h3>
-            <p>Designed and implemented microservices for a distributed system using Docker and Kubernetes for deployment.</p>
-        </div>
-        <div>
-            <h3><a href="collage.html">E-commerce Backend with Payment Integration</a></h3>
-            <p>Created a robust backend for an online store, integrating payment gateways and inventory management.</p>
+    <!-- About Section -->
+    <section id="about" class="py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h2>About Me</h2>
+                    <p>Experienced backend developer with over 5 years in building scalable server-side applications, RESTful APIs, and database-driven solutions. Proficient in modern technologies to deliver high-performance systems for web and mobile platforms.</p>
+                    <p>I specialize in creating robust architectures that handle high traffic and complex data requirements.</p>
+                </div>
+                <div class="col-md-6">
+                    <img src="img/sustainable-travel-concept_23-2151049514.avif" alt="Professional Developer Image" class="img-fluid rounded">
+                </div>
+            </div>
         </div>
     </section>
 
-    <section id="contact">
-        <h2>Contact Information</h2>
-        <p><strong>Email:</strong> john.doe@example.com</p>
-        <p><strong>Phone:</strong> (123) 456-7890</p>
-        <p><strong>GitHub:</strong> <a href="https://github.com/johndoe" target="_blank">github.com/johndoe</a></p>
-        <p><strong>LinkedIn:</strong> <a href="https://linkedin.com/in/johndoe" target="_blank">linkedin.com/in/johndoe</a></p>
-        <p><strong>Location:</strong> New York, NY</p>
+    <!-- Experience Section -->
+    <section id="experience" class="bg-light py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">Professional Experience</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Senior Backend Developer at TechCorp</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">2020 - Present</h6>
+                            <p class="card-text">Developed and maintained microservices architecture, optimized database queries, and integrated third-party APIs for e-commerce platforms.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Backend Developer at StartupXYZ</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">2018 - 2020</h6>
+                            <p class="card-text">Built REST APIs using Node.js and Express, managed MongoDB databases, and collaborated with frontend teams for seamless integration.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
-    <footer>
-        <p>&copy; 2026 John Doe. All rights reserved. | <a href="#">Download Resume</a></p>
+    <!-- Skills Section -->
+    <section id="skills" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">Technical Skills</h2>
+            <div class="row">
+                <div class="col-md-3">
+                    <h5>Languages</h5>
+                    <ul class="list-unstyled">
+                        <li>Python</li>
+                        <li>JavaScript (Node.js)</li>
+                        <li>Java</li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Databases</h5>
+                    <ul class="list-unstyled">
+                        <li>MySQL</li>
+                        <li>PostgreSQL</li>
+                        <li>MongoDB</li>
+                        <li>Redis</li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Frameworks</h5>
+                    <ul class="list-unstyled">
+                        <li>Express.js</li>
+                        <li>Django</li>
+                        <li>Spring Boot</li>
+                        <li>FastAPI</li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Tools & Technologies</h5>
+                    <ul class="list-unstyled">
+                        <li>Git</li>
+                        <li>Docker</li>
+                        <li>Kubernetes</li>
+                        <li>AWS</li>
+                        <li>RESTful APIs</li>
+                        <li>GraphQL</li>
+                        <li>CI/CD</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="bg-light py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">Key Projects</h2>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title"><a href="layout.html">REST API for User Management</a></h5>
+                            <p class="card-text">Developed a secure API handling user authentication, authorization, and data management using Node.js and MongoDB.</p>
+                            <a href="layout.html" class="btn btn-primary">View Project</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title"><a href="grid.html">Database-Driven Blog System</a></h5>
+                            <p class="card-text">Built a scalable blog platform with PostgreSQL, featuring content management and user engagement features.</p>
+                            <a href="grid.html" class="btn btn-primary">View Project</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title"><a href="flex.html">Microservices Architecture Example</a></h5>
+                            <p class="card-text">Designed and implemented microservices for a distributed system using Docker and Kubernetes for deployment.</p>
+                            <a href="flex.html" class="btn btn-primary">View Project</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title"><a href="collage.html">E-commerce Backend with Payment Integration</a></h5>
+                            <p class="card-text">Created a robust backend for an online store, integrating payment gateways and inventory management.</p>
+                            <a href="collage.html" class="btn btn-primary">View Project</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">Contact Information</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Get In Touch</h5>
+                    <p><strong>Email:</strong> john.doe@example.com</p>
+                    <p><strong>Phone:</strong> (123) 456-7890</p>
+                    <p><strong>Location:</strong> New York, NY</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Follow Me</h5>
+                    <p><a href="https://github.com/johndoe" target="_blank">GitHub</a></p>
+                    <p><a href="https://linkedin.com/in/johndoe" target="_blank">LinkedIn</a></p>
+                    <p><a href="#">Download Resume</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3">
+        <div class="container">
+            <p>&copy; 2026 John Doe. All rights reserved.</p>
+        </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
