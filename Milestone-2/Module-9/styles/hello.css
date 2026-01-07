@@ -12,7 +12,7 @@ body {
 .brand{
     font-size: 24px;
     font-weight: bold;
-    /* margin-bottom: 10px; */
+    margin-bottom: 10px;
 }
 .brand a{
     color: white;
@@ -33,7 +33,7 @@ body {
     justify-content: space-between;
 }
 header {
-    background-color: #4CAF50;
+    background-color: #2de98b;
     color: white;
     padding: 10px 0;
     text-align: center;
